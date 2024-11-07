@@ -1,0 +1,116 @@
+---
+title: "Portfolio Assignment 2 – Introduction to Cultural Data Science"
+author: "Emil Frej Brunbjeg"
+date: "Date"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(dslabs)
+library(car)
+
+```
+
+## Part 1
+
+*Load the 'divorce_margarine' dataset from the 'dslabs' package.
+Investigate the correlation between margarine consumption and divorce
+rates in Maine. Would an increase in the preference for margarine lead
+to skyrocketing divorce rates?*
+
+```{r }
+# Load dataset
+data("divorce_margarine", package = "dslabs")
+
+#show
+head(divorce_margarine)
+
+```
+
+The correlation between the variables is
+`r cor(divorce_margarine$margarine_consumption)`. While this looks like
+a perfect correlation, but correlation does not imply causation, and we
+there cannot use this measure to say if an increase in the preference
+for margarine lead to skyrocketing divorce rates.
+
+## Part 2: Vocabulary Scores and Demographics
+
+### Load and Filter the GSSvocab Dataset
+
+```{r load-gssvocab}
+# Load dataset
+
+
+#filter year
+GSSvocab <- GSSvocab %>%
+  filter(year == 1978) %>%  # filter for year
+  drop_na(everything()) # drop na in all col names
+
+
+
+  
+
+
+
+```
+
+### Is Vocabulary Score Impacted by Education?
+
+```{r vocab-education-model}
+# Scatter plot of vocabulary score vs education
+ggplot(gss_1978, aes(x = educ, y = vocab)) +
+  geom_point() +
+  geom_smooth(method = "lm", col = "blue") +
+  labs(title = "Vocabulary Score vs Education Level",
+       x = "Education Level",
+       y = "Vocabulary Score")
+
+# Linear model
+model_educ_vocab <- lm(vocab ~ educ, data = gss_1978)
+summary(model_educ_vocab)
+```
+
+### Does Native-Born Status Affect Vocabulary Score?
+
+```{r vocab-nativeborn-model}
+# Boxplot for vocabulary score by native-born status
+ggplot(gss_1978, aes(x = nativeBorn, y = vocab, fill = nativeBorn)) +
+  geom_boxplot() +
+  labs(title = "Vocabulary Score by Native-Born Status",
+       x = "Native Born",
+       y = "Vocabulary Score")
+
+# Linear model with nativeBorn as predictor
+model_native_vocab <- lm(vocab ~ educ + nativeBorn, data = gss_1978)
+summary(model_native_vocab)
+```
+
+### Relationship Between Education Level and Native-Born Status
+
+```{r education-nativeborn-relationship}
+# Visualize relationship between education and native-born status
+ggplot(gss_1978, aes(x = nativeBorn, y = educ, fill = nativeBorn)) +
+  geom_boxplot() +
+  labs(title = "Education Level by Native-Born Status",
+       x = "Native Born",
+       y = "Education Level")
+
+# Linear model with interaction term
+model_interaction <- lm(vocab ~ educ * nativeBorn, data = gss_1978)
+summary(model_interaction)
+```
+
+### Model Comparison
+
+```{r model-comparison}
+# Compare model summaries
+summary(model_educ_vocab)
+summary(model_native_vocab)
+summary(model_interaction)
+```
+
+This R Markdown file analyzes the relationship between margarine
+consumption and divorce rates in Maine, then explores the impact of
+education and native-born status on vocabulary scores.
