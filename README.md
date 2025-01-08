@@ -1,3 +1,3 @@
 # CulturalDataScience
 
-test
+This my repo for cultura data science🥳
